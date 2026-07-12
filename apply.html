@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply for Access — NeoBot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html{ zoom:0.85; }
+  :root{
+    --bg:#000000;
+    --surface:#141414;
+    --surface-2:#1A1A1A;
+    --border:#262626;
+    --text:#F5F3F8;
+    --text-dim:#9B94AC;
+    --profit:#22C55E;
+    --loss:#F87171;
+    --gold:#6C63FF;
+    --gold-text:#FFFFFF;
+    --gradient:linear-gradient(135deg, #6C63FF 0%, #8B7FFF 50%, #8B7FFF 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(108,99,255,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(108,99,255,0.10), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Open Sans',sans-serif;
+    line-height:1.6;
+  }
+  h1,h2{font-family:'Open Sans',sans-serif; font-weight:500;}
+  a{color:inherit;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px;}
+
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(0,0,0,0.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{ max-width:1100px; display:flex; align-items:center; justify-content:space-between; height:72px; }
+  .logo{font-family:'Open Sans',sans-serif; font-weight:600; font-size:27px; letter-spacing:-0.5px; display:flex; align-items:center; gap:11px; background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent; text-decoration:none;}
+  .logo-icon{ flex-shrink:0; }
+  .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--profit); box-shadow:0 0 8px var(--profit);}
+  .back-link{ font-size:14px; color:var(--text-dim); text-decoration:none; display:flex; align-items:center; gap:6px; }
+  .back-link:hover{ color:var(--text); }
+
+  header.hero{ padding:32px 0 24px; text-align:center; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+    color:#FECC99; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:16px;
+  }
+  .eyebrow::before{content:"●"; font-size:8px;}
+  h1{ font-size:clamp(30px,4.5vw,44px); margin-bottom:14px; }
+  header.hero p{ color:var(--text-dim); font-size:15.5px; max-width:520px; margin:0 auto; }
+
+  /* ---------- PROGRESS BAR ---------- */
+  .progress-bar-wrap{ padding:8px 0 20px; }
+  .progress-bar{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+  .progress-step{
+    width:52px; height:52px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface); border:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:19px; font-weight:700;
+    color:var(--text-dim); transition:all .25s; cursor:pointer;
+  }
+  .progress-step:hover{ border-color:var(--gold); }
+  .progress-step.active{
+    background:var(--gold); border-color:var(--gold); color:var(--gold-text);
+    box-shadow:0 0 0 6px rgba(108,99,255,0.18);
+  }
+  .progress-step.done{
+    background:transparent; border-color:var(--gold); color:var(--gold);
+  }
+  @media (max-width:520px){
+    .progress-bar{ gap:8px; }
+    .progress-step{ width:40px; height:40px; font-size:15px; }
+  }
+
+  main{ padding-bottom:100px; }
+
+  .step-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:32px; margin-bottom:28px; box-shadow:0 4px 24px rgba(0,0,0,0.25);
+  }
+  .step-label{
+    display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace;
+    font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim);
+    margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border);
+  }
+  .step-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%; background:var(--gradient); color:var(--gold-text);
+    font-weight:700; font-size:12px; flex-shrink:0;
+  }
+  .step-card h2{ font-size:20px; margin-bottom:10px; }
+  .step-card p.desc{ color:var(--text-dim); font-size:14.5px; margin-bottom:20px; }
+
+  /* ---------- RISK GATE STEPS ---------- */
+  .raq-block{
+    padding:18px 0; border-bottom:1px solid var(--border);
+  }
+  .raq-block:first-of-type{ padding-top:0; }
+  .raq-q{ font-size:15px; font-weight:600; margin-bottom:6px; line-height:1.5; }
+  .raq-sub{ font-weight:400; color:var(--text-dim); font-size:14px; }
+  .raq-opts{ display:flex; gap:24px; margin-top:12px; }
+  .raq-opts label{ display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14.5px; }
+  .raq-opts input[type="radio"]{ width:18px; height:18px; accent-color:var(--gold); cursor:pointer; }
+
+  .disclosure-text{
+    background:var(--bg); border:1px solid var(--border); border-radius:10px;
+    padding:20px 22px; margin-bottom:20px; max-height:340px; overflow-y:auto;
+  }
+  .disclosure-text p{ color:var(--text-dim); font-size:14px; line-height:1.7; margin-bottom:14px; }
+  .disclosure-text p:last-child{ margin-bottom:0; }
+
+  .disclosure-accept{
+    display:flex; align-items:flex-start; gap:12px; cursor:pointer;
+    padding:16px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px;
+  }
+  .disclosure-accept input[type="checkbox"]{
+    width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--gold); cursor:pointer;
+  }
+  .disclosure-accept span{ font-size:14px; color:var(--text-dim); line-height:1.6; }
+
+  .step-nav{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:24px; }
+  .step-nav .btn{ min-width:120px; }
+  .step-nav button:only-child{ margin-left:auto; }
+
+  .ib-note{
+    background:var(--bg); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; font-size:13.5px; color:var(--text-dim); margin-bottom:20px;
+  }
+
+  .broker-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px;
+  }
+  @media (max-width:640px){ .broker-grid{ grid-template-columns:repeat(2,1fr); } }
+  .broker-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center;
+    background:var(--bg); border:1px solid var(--border); border-radius:14px;
+    padding:16px 14px; min-height:112px; text-decoration:none; transition:all .15s;
+    font-family:inherit; cursor:pointer; width:100%;
+  }
+  .broker-card:hover{ border-color:var(--gold); transform:translateY(-2px); }
+  .broker-card img{ max-width:100%; max-height:56px; width:auto; height:auto; object-fit:contain; }
+  .broker-card span{ font-family:'Open Sans',sans-serif; font-size:12.5px; font-weight:600; color:var(--text-dim); }
+
+  .broker-accordion{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;
+  }
+  @media (max-width:420px){ .broker-accordion{ grid-template-columns:repeat(2,1fr); } }
+  .broker-item{
+    background:var(--bg); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+  }
+  .broker-item.open{ grid-column:1 / -1; }
+  .broker-toggle{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:56px;
+    background:transparent; border:none; padding:16px 10px; cursor:pointer; font-family:'Open Sans',sans-serif;
+    font-weight:700; font-size:15px; color:var(--gold); text-align:center; transition:all .15s;
+  }
+  .broker-toggle:hover{ border-color:var(--gold); }
+  .broker-item.open .broker-toggle{ background:var(--gradient); color:var(--gold-text); }
+  .broker-toggle .broker-chevron{ font-size:12px; transition:transform .2s; flex-shrink:0; }
+  .broker-item.open .broker-chevron{ transform:rotate(180deg); }
+  .broker-panel{ padding:16px 18px 20px; border-top:1px solid var(--border); }
+  .broker-panel p{ font-size:13.5px; color:var(--text-dim); line-height:1.6; }
+
+  .broker-settings-table{ display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .broker-settings-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--bg); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; font-size:13.5px;
+  }
+  .broker-settings-row span{ color:var(--text-dim); }
+  .broker-settings-row strong{ color:var(--text); font-weight:700; text-align:right; }
+
+  .broker-callout{
+    background:rgba(108,99,255,0.12); border:1px solid rgba(108,99,255,0.35); color:var(--gold);
+    border-radius:10px; padding:12px 14px; font-size:13.5px; font-weight:600; line-height:1.6; margin-bottom:16px;
+  }
+
+  .broker-panel .broker-steps-title{
+    font-weight:700; font-size:14.5px; color:var(--text); margin-bottom:10px;
+  }
+  .broker-steps{ margin:0 0 16px; padding-left:20px; }
+  .broker-steps li{ font-size:13.5px; color:var(--text-dim); margin-bottom:8px; line-height:1.6; }
+  .broker-steps strong{ color:var(--text); }
+
+  .broker-reglink{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--gradient); color:var(--gold-text);
+    font-weight:700; font-size:13.5px; padding:10px 16px; border-radius:8px; text-decoration:none; width:100%;
+  }
+  .broker-note{ text-align:center; margin-top:10px; margin-bottom:0; font-size:12px; }
+
+  .step-toggle-btn{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;
+    background:transparent; border:none; cursor:pointer; font-family:inherit; text-align:left;
+    margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border);
+  }
+  .step-toggle-btn:hover .step-label{ color:var(--gold); }
+  .step-toggle-btn .step-label{ margin-bottom:0; padding-bottom:0; border-bottom:none; }
+  .step-toggle-btn .step-chevron{ font-size:13px; color:var(--text-dim); transition:transform .2s; flex-shrink:0; }
+  .step-card.open .step-toggle-btn .step-chevron{ transform:rotate(180deg); }
+  .file-input{
+    background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+    color:var(--text-dim); font-size:13.5px; width:100%; font-family:inherit; cursor:pointer;
+  }
+
+  .checklist{
+    background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--gold);
+    border-radius:10px; padding:18px 20px;
+  }
+  .checklist-title{ font-weight:600; font-size:14px; margin-bottom:10px; }
+  .checklist ul{ margin:0; padding-left:20px; }
+  .checklist li{ font-size:13.5px; color:var(--text-dim); margin-bottom:8px; }
+  .checklist li:last-child{ margin-bottom:0; }
+  .checklist strong{ color:var(--text); }
+
+  .form-embed-wrap{
+    position:relative; width:100%; border-radius:14px; overflow:hidden; background:var(--surface-2);
+    min-height:600px;
+  }
+  .form-embed-wrap iframe{
+    width:100%; height:900px; border:none; display:block;
+  }
+  .embed-note{
+    text-align:center; padding:14px; font-size:12.5px; color:var(--text-dim);
+  }
+  .edit-flag{
+    display:inline-block; background:#3a2f00; color:var(--gold); font-size:11px;
+    font-family:'JetBrains Mono',monospace; padding:2px 6px; border-radius:3px; margin-left:6px;
+  }
+
+  /* Payment tabs (same as main site) */
+  .pay-tabs{ display:flex; gap:4px; flex-wrap:wrap; padding:0 0 20px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+  .pay-tab{
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:9px 14px; border-radius:5px;
+    cursor:pointer; transition:all .15s;
+  }
+  .pay-tab:hover{ color:var(--text); border-color:var(--text-dim); }
+  .pay-tab.active{ background:var(--gradient); color:var(--gold-text); border-color:transparent; font-weight:600; }
+  .pay-panel{ padding:4px 0 8px; }
+  .pay-desc{ font-size:14px; color:var(--text-dim); margin-bottom:16px; }
+  .wallet-box{
+    display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--border);
+    border-radius:10px; padding:14px 16px;
+  }
+  .wallet-address{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text); word-break:break-all; flex-grow:1; }
+  .copy-btn{
+    flex-shrink:0; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:'JetBrains Mono',monospace; font-size:12px; padding:8px 14px; border-radius:5px; cursor:pointer;
+    transition:background .15s;
+  }
+  .copy-btn:hover{ background:var(--border); }
+  .copy-btn.copied{ background:var(--profit); color:#FFFFFF; border-color:var(--profit); }
+  .pay-note{ font-size:13px; color:var(--text-dim); padding-top:16px; margin-top:16px; border-top:1px solid var(--border); }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:14px 24px; border-radius:10px;
+    font-weight:600; font-size:15px; text-decoration:none; border:1px solid transparent; cursor:pointer;
+    transition:transform .15s, background .15s;
+  }
+  .btn-primary{ background:var(--gradient); color:var(--gold-text); border-radius:999px; }
+  .btn-primary:hover{ transform:translateY(-2px); }
+
+  footer{ text-align:center; padding:32px 0; color:var(--text-dim); font-size:13px; }
+
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media (max-width:560px){ .form-row{ grid-template-columns:1fr; } }
+  label{ display:block; font-size:13px; color:var(--text-dim); margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
+  input, select{
+    width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; color:var(--text); font-size:14px; font-family:'Open Sans',sans-serif;
+  }
+  input:focus, select:focus{ border-color:var(--gold); outline:none; }
+  .form-msg{ margin-top:14px; font-size:14px; text-align:center; }
+  .form-msg.ok{ color:var(--profit); }
+  .form-msg.err{ color:var(--loss); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="neobot.html" class="logo">
+      <svg viewBox="0 0 100 100" width="36" height="36" class="logo-icon">
+        <defs>
+          <linearGradient id="logoGrad2" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stop-color="#6C63FF"/>
+            <stop offset="55%" stop-color="#8B7FFF"/>
+            <stop offset="100%" stop-color="#8B7FFF"/>
+          </linearGradient>
+        </defs>
+        <polygon points="14,12 38,12 77,88 53,88" fill="url(#logoGrad2)"/>
+        <polygon points="12,55 36,55 53,88 29,88" fill="url(#logoGrad2)"/>
+        <polygon points="38,12 62,12 79,45 55,45" fill="url(#logoGrad2)"/>
+      </svg>
+      NeoBot
+    </a>
+    <a href="neobot.html" class="back-link">&larr; Back to site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Apply for access</h1>
+    <p>Please complete each step below in order.</p>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="wrap">
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-step active" data-step="1"><span>1</span></div>
+      <div class="progress-step" data-step="2"><span>2</span></div>
+      <div class="progress-step" data-step="3"><span>3</span></div>
+      <div class="progress-step" data-step="4"><span>4</span></div>
+      <div class="progress-step" data-step="5"><span>5</span></div>
+      <div class="progress-step" data-step="6"><span>6</span></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="step-card" id="gateStep1">
+      <div class="step-label"><span class="step-num">1</span> Risk acknowledgement</div>
+      <h2>Risk acknowledgement</h2>
+      <p class="desc">Please answer all four questions before continuing.</p>
+
+      <div class="raq-block" data-q="raq1">
+        <p class="raq-q">Q1. Trading Risk Acknowledgement *<br><span class="raq-sub">Do you understand that trading involves risk and that you may lose part or all of your capital?</span></p>
+        <div class="raq-opts">
+          <label><input type="radio" name="raq1" value="Yes"> Yes</label>
+          <label><input type="radio" name="raq1" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="raq-block" data-q="raq2">
+        <p class="raq-q">Q2. Risk Management Responsibility *<br><span class="raq-sub">Do you confirm that you are fully responsible for your own risk management, including risk multipliers, account size, position sizing, and any other account settings?</span></p>
+        <div class="raq-opts">
+          <label><input type="radio" name="raq2" value="Yes"> Yes</label>
+          <label><input type="radio" name="raq2" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="raq-block" data-q="raq3">
+        <p class="raq-q">Q3. No Profit Guarantee *<br><span class="raq-sub">Do you acknowledge that past performance does not guarantee future results and that profits are never guaranteed?</span></p>
+        <div class="raq-opts">
+          <label><input type="radio" name="raq3" value="Yes"> Yes</label>
+          <label><input type="radio" name="raq3" value="No"> No</label>
+        </div>
+      </div>
+
+      <div class="raq-block" data-q="raq4">
+        <p class="raq-q">Q4. Educational Purpose / No Financial Advice *<br><span class="raq-sub">Do you understand that all content provided is for educational purposes only and does not constitute personalized financial, investment, or trading advice?</span></p>
+        <div class="raq-opts">
+          <label><input type="radio" name="raq4" value="Yes"> Yes</label>
+          <label><input type="radio" name="raq4" value="No"> No</label>
+        </div>
+      </div>
+
+      <div id="gate1Msg" class="form-msg"></div>
+      <div class="step-nav">
+        <button type="button" class="btn btn-primary" id="gate1Continue" style="justify-content:center;">Continue</button>
+      </div>
+    </div>
+
+    <div class="step-card" id="gateStep2" hidden>
+      <div class="step-label"><span class="step-num">2</span> Risk disclosure &amp; terms</div>
+      <h2>Risk disclosure &amp; terms</h2>
+      <p class="desc">Please read carefully and accept before continuing.</p>
+
+      <div class="disclosure-text">
+        <p>Trading can result in significant losses, including the loss of your entire investment. You should never trade with money you cannot afford to lose, and you should carefully consider your financial situation, investment objectives, level of experience, and risk appetite before deciding to trade.</p>
+        <p>The EA is built using carefully developed strategies and has been tested under various market conditions. However, past performance is not indicative of future results and no representation, warranty, or guarantee — express or implied — is made that any account using the EA will achieve profits or avoid losses. Hypothetical, simulated, or back-tested results have inherent limitations and may differ materially from actual trading results.</p>
+        <p>You are solely responsible for ensuring that your use of the EA complies with the laws, regulations, and tax obligations of your country of residence. The Trading Shelter and its affiliates shall not be held liable for any direct, indirect, incidental, consequential, or other losses or damages arising from your use of the EA, the website, or any related services.</p>
+        <p>By creating an account you confirm that you have read, fully understood, and freely accepted this disclosure, and that you are using the EA at your own risk and entirely on your own responsibility.</p>
+      </div>
+
+      <label class="disclosure-accept">
+        <input type="checkbox" id="gate2Accept">
+        <span>I have read, understood, and accepted the full Risk Disclosure above. I acknowledge that trading involves substantial risk, that past performance does not guarantee future results, and that I am solely responsible for my own trading decisions, account configuration, and risk management.</span>
+      </label>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" id="gate2Back">Back</button>
+        <button type="button" class="btn btn-primary" id="gate2Continue" disabled>Continue</button>
+      </div>
+    </div>
+
+    <div id="gateDetailsWrap" hidden>
+
+    <div class="step-card acknowledgment-card">
+      <div class="step-label"><span class="step-num">3</span> Before you begin</div>
+      <h2>⚠️ Note: before you begin</h2>
+      <ul class="ack-list">
+        <li><strong>Minimum capital:</strong> your account balance must be at least USD 1,000. Accounts below this amount will NOT be accepted.</li>
+        <li><strong>MT5 account access:</strong> the EA service requires your MT5 account credentials. Your funds will ALWAYS remain held by your broker — we CANNOT withdraw, transfer, or deposit funds from your account. Only you can request withdrawals directly from your broker.</li>
+      </ul>
+    </div>
+
+    <div class="step-card">
+      <div class="step-label"><span class="step-num">4</span> Open a broker account</div>
+      <h2>Register with one of our partnered brokers</h2>
+      <p class="desc">Choose any of the 8 brokers below — you can also use more than one to diversify your funds. <strong>You must register using the referral links below</strong>, or access will not be granted. After registering, verify your email address. Some brokers email your MT5 login automatically; others require you to create the MT5 account yourself from the broker portal.</p>
+
+      <div class="broker-accordion">
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-0">
+          <span class="broker-name">Vantage Markets</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-0" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=vantagefx" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-1">
+          <span class="broker-name">VT Markets</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-1" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=vtuk" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-2">
+          <span class="broker-name">Axi Trader</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-2" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=axitrader" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-3">
+          <span class="broker-name">BullWaves</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-3" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=bullwaves" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-4">
+          <span class="broker-name">PU Prime</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-4" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=pu" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-5">
+          <span class="broker-name">Startrader</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-5" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=startrader" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      <div class="broker-item">
+        <button type="button" class="broker-toggle" data-target="broker-panel-6">
+          <span class="broker-name">Kudotrade</span>
+          <span class="broker-chevron">&#9662;</span>
+        </button>
+        <div class="broker-panel" id="broker-panel-6" hidden>
+          <div class="broker-settings-table">
+            <div class="broker-settings-row"><span>Platform</span><strong>MetaTrader 5</strong></div>
+            <div class="broker-settings-row"><span>Account Type</span><strong>RAW ECN</strong></div>
+            <div class="broker-settings-row"><span>Minimum Deposit</span><strong>&euro;1,050 / $1,050 / &pound;850 (single transaction)</strong></div>
+            <div class="broker-settings-row"><span>Leverage</span><strong>1:300 minimum (confirm with the broker)</strong></div>
+          </div>
+
+          <div class="broker-callout">The deposit MUST be made in ONE single full payment &mdash; never split into multiple parts.</div>
+
+          <div class="broker-steps-title">Step-by-step</div>
+          <ol class="broker-steps">
+            <li>Tap &ldquo;Open registration&rdquo; below and create your account using your email and password.</li>
+            <li>Complete the sign-up form and verify your email address when the broker sends a confirmation link.</li>
+            <li>Leave the &ldquo;Referred by&rdquo; field empty, then accept the terms and create your account.</li>
+            <li>From your broker dashboard, confirm your MT5 account is set to <strong>Raw ECN</strong> with <strong>1:300 leverage</strong> minimum.</li>
+            <li>Deposit <strong>&euro;1,050 / $1,050 / &pound;850 minimum in ONE single transaction</strong> &mdash; never split into multiple deposits.</li>
+            <li>Log in to MetaTrader 5 with the credentials the broker sends you, then come back here to continue your application.</li>
+          </ol>
+
+          <a href="https://go.wealthwaveaffiliation.com/visit/?bta=35297&brand=kudotrade" target="_blank" rel="noopener" class="broker-reglink">Open registration</a>
+          <p class="broker-note">Always register directly through this link &mdash; not the mobile app &mdash; or access can't be granted.</p>
+        </div>
+      </div>
+      </div>
+
+      <div class="warn-note">Only use the links above to register. Signing up any other way means access cannot be granted.</div>
+    </div>
+
+    <div class="step-nav" style="margin-bottom:8px;">
+      <button type="button" class="btn btn-ghost" id="gate3Back">Back</button>
+      <button type="button" class="btn btn-primary" id="gate3Continue">Continue</button>
+    </div>
+    </div><!-- /gateDetailsWrap -->
+
+    <div id="gateVerifyWrap" hidden>
+
+    <div class="step-card">
+      <div class="step-label"><span class="step-num">5</span> Activate your account</div>
+      <h2>Activate your account</h2>
+      <p class="desc">Verify your account by opening a lot size trade on EURUSD.</p>
+
+      <div class="checklist">
+        <div class="checklist-title">How to activate:</div>
+        <ul>
+          <li>Open a <strong>1 lot trade on EURUSD</strong>.</li>
+          <li>Keep the trade open for <strong>15–30 seconds</strong>, then close it.</li>
+          <li>Make sure to do this during <strong>low volatility hours</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-nav" style="margin-bottom:8px;">
+      <button type="button" class="btn btn-ghost" id="gateVerifyBack">Back</button>
+      <button type="button" class="btn btn-primary" id="gateVerifyContinue">Continue</button>
+    </div>
+
+    </div><!-- /gateVerifyWrap -->
+
+    <div id="gateSubmitWrap" hidden>
+
+    <div class="step-card">
+      <div class="step-label"><span class="step-num">6</span> Submit for verification</div>
+      <h2>Send us your details</h2>
+      <p class="desc">Fill out the form below — this lets us verify your account and connect the EA. Attach a screenshot of your 1 lot EURUSD trade so we can confirm activation.</p>
+
+      <!-- ============================================================ -->
+      <!--  PASTE YOUR TALLY EMBED CODE INSIDE THIS SLOT.               -->
+      <!--  Tally -> Share -> Embed -> copy code -> replace the         -->
+      <!--  placeholder div below with it.                             -->
+      <!-- ============================================================ -->
+      <div class="tally-slot" style="border-radius:16px; min-height:520px;">
+
+        <iframe data-tally-src="https://tally.so/embed/QKWRvp?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                loading="lazy" width="100%" height="600" frameborder="0" marginheight="0" marginwidth="0"
+                title="NeoBot Application"></iframe>
+
+      </div>
+      <script>
+        (function(){
+          var d=document,w="https://tally.so/widgets/embed.js",v=function(){
+            if(typeof Tally!=="undefined"){Tally.loadEmbeds();return;}
+            d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e){e.src=e.dataset.tallySrc;});
+          };
+          if(typeof Tally!=="undefined"){v();return;}
+          if(d.querySelector('script[src="'+w+'"]')==null){
+            var s=d.createElement("script");s.src=w;s.onload=v;s.onerror=v;d.body.appendChild(s);
+          }
+        })();
+      </script>
+      <!-- ============================================================ -->
+      <div class="embed-note">We do not have access to withdraw, transfer, or control your funds — they always remain under your control through your broker.</div>
+    </div>
+
+    <div class="step-nav" style="margin-bottom:8px;">
+      <button type="button" class="btn btn-ghost" id="gateSubmitBack">Back</button>
+      <button type="button" class="btn btn-primary" id="gateSubmitContinue">Continue</button>
+    </div>
+
+    </div><!-- /gateSubmitWrap -->
+
+    <div id="gatePaymentWrap" hidden>
+
+    <div class="step-card">
+      <div class="step-label"><span class="step-num">7</span> Complete payment</div>
+      <h2>How to pay</h2>
+      <p class="desc">Choose PayPal or send crypto directly. Once payment is confirmed, we'll reach out to activate your account.</p>
+      <div class="ib-note">If your account was opened under our broker referral (IB), we'll confirm this on our end first — for the Monthly Access plan, we may reach out to request payment only after that confirmation rather than upfront. Profit Split members can proceed with the steps below right away.</div>
+
+      <div class="pay-tabs" role="tablist">
+        <button class="pay-tab active" data-target="pay-paypal" role="tab" aria-selected="true">PayPal</button>
+        <button class="pay-tab" data-target="pay-usdt-trc20" role="tab" aria-selected="false">USDT (TRC20)</button>
+        <button class="pay-tab" data-target="pay-usdt-erc20" role="tab" aria-selected="false">USDT (ERC20)</button>
+        <button class="pay-tab" data-target="pay-btc" role="tab" aria-selected="false">Bitcoin</button>
+      </div>
+
+      <div class="pay-panel" id="pay-paypal">
+        <p class="pay-desc">Pay securely with PayPal — works with card or PayPal balance.</p>
+        <a href="https://paypal.me/YOUR-PAYPAL-HERE" target="_blank" rel="noopener" class="btn btn-primary" style="justify-content:center; width:100%;">
+          Pay with PayPal <span class="edit-flag">EDIT: add your link</span>
+        </a>
+      </div>
+
+      <div class="pay-panel" id="pay-usdt-trc20" hidden>
+        <p class="pay-desc">Send USDT on the <strong>TRC20 (Tron)</strong> network only. Sending on the wrong network may result in lost funds.</p>
+        <div class="wallet-box">
+          <span class="wallet-address" data-address="YOUR_USDT_TRC20_ADDRESS_HERE">YOUR_USDT_TRC20_ADDRESS_HERE</span>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <span class="edit-flag">EDIT: add your USDT TRC20 wallet address</span>
+      </div>
+
+      <div class="pay-panel" id="pay-usdt-erc20" hidden>
+        <p class="pay-desc">Send USDT on the <strong>ERC20 (Ethereum)</strong> network only. Network fees are higher than TRC20.</p>
+        <div class="wallet-box">
+          <span class="wallet-address" data-address="YOUR_USDT_ERC20_ADDRESS_HERE">YOUR_USDT_ERC20_ADDRESS_HERE</span>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <span class="edit-flag">EDIT: add your USDT ERC20 wallet address</span>
+      </div>
+
+      <div class="pay-panel" id="pay-btc" hidden>
+        <p class="pay-desc">Send Bitcoin to the address below. Please allow for network confirmation time.</p>
+        <div class="wallet-box">
+          <span class="wallet-address" data-address="YOUR_BTC_ADDRESS_HERE">YOUR_BTC_ADDRESS_HERE</span>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <span class="edit-flag">EDIT: add your BTC wallet address</span>
+      </div>
+
+      <div class="pay-note">After sending payment, take a screenshot of your confirmation and send it to us via WhatsApp or email so we can activate your account.</div>
+    </div>
+
+    <div class="step-nav" style="margin-bottom:8px;">
+      <button type="button" class="btn btn-ghost" id="gatePaymentBack">Back</button>
+    </div>
+
+    </div><!-- /gatePaymentWrap -->
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 NeoBot. Trading involves risk.</div>
+</footer>
+
+
+<script>
+  document.querySelectorAll('.pay-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pay-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.pay-panel').forEach(p => p.hidden = true);
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected','true');
+      document.getElementById(tab.dataset.target).hidden = false;
+    });
+  });
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const addrEl = btn.previousElementSibling;
+      const text = addrEl.dataset.address;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+      } catch (err) {
+        btn.textContent = 'Copy failed';
+      }
+    });
+  });
+
+  document.querySelectorAll('.broker-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.broker-item');
+      const panel = document.getElementById(btn.dataset.target);
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open', !isOpen);
+      panel.hidden = isOpen;
+    });
+  });
+
+</script>
+
+<script>
+  // ---------- STEP GATING: Risk Acknowledgement -> Risk Disclosure -> Details -> Payment ----------
+  const gateStep1 = document.getElementById('gateStep1');
+  const gateStep2 = document.getElementById('gateStep2');
+  const gateDetailsWrap = document.getElementById('gateDetailsWrap');
+  const gateVerifyWrap = document.getElementById('gateVerifyWrap');
+  const gatePaymentWrap = document.getElementById('gatePaymentWrap');
+  const gateSubmitWrap = document.getElementById('gateSubmitWrap');
+  const gate1Continue = document.getElementById('gate1Continue');
+  const gate1Msg = document.getElementById('gate1Msg');
+  const gate2Accept = document.getElementById('gate2Accept');
+  const gate2Continue = document.getElementById('gate2Continue');
+  const gate2Back = document.getElementById('gate2Back');
+  const gate3Back = document.getElementById('gate3Back');
+  const gate3Continue = document.getElementById('gate3Continue');
+  const gateVerifyBack = document.getElementById('gateVerifyBack');
+  const gateVerifyContinue = document.getElementById('gateVerifyContinue');
+  const gatePaymentBack = document.getElementById('gatePaymentBack');
+  const gateSubmitBack = document.getElementById('gateSubmitBack');
+  const gateSubmitContinue = document.getElementById('gateSubmitContinue');
+  const progressSteps = document.querySelectorAll('.progress-step');
+
+  progressSteps.forEach(el => {
+    el.addEventListener('click', () => showStep(Number(el.dataset.step)));
+  });
+
+  function showStep(step){
+    gateStep1.hidden = step !== 1;
+    gateStep2.hidden = step !== 2;
+    gateDetailsWrap.hidden = step !== 3;
+    gateVerifyWrap.hidden = step !== 4;
+    gateSubmitWrap.hidden = step !== 5;
+    gatePaymentWrap.hidden = step !== 6;
+
+    progressSteps.forEach(el => {
+      const n = Number(el.dataset.step);
+      el.classList.toggle('active', n === step);
+      el.classList.toggle('done', n < step);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Deep-link support: apply.html?step=payment jumps straight to the payment step
+  // (used by status.html's "Proceed to payment" button)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('step') === 'payment') {
+    showStep(6);
+  }
+
+  gate1Continue.addEventListener('click', () => {
+    const questions = ['raq1','raq2','raq3','raq4'];
+    let allYes = true;
+    let allAnswered = true;
+    questions.forEach(name => {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      if (!checked) allAnswered = false;
+      else if (checked.value !== 'Yes') allYes = false;
+    });
+
+    if (!allAnswered) {
+      gate1Msg.textContent = 'Please answer all four questions before continuing.';
+      gate1Msg.className = 'form-msg err';
+      return;
+    }
+    if (!allYes) {
+      gate1Msg.textContent = 'You must acknowledge and agree to all four statements to proceed with this application.';
+      gate1Msg.className = 'form-msg err';
+      return;
+    }
+    gate1Msg.textContent = '';
+    gate1Msg.className = 'form-msg';
+    showStep(2);
+  });
+
+  gate2Accept.addEventListener('change', () => {
+    gate2Continue.disabled = !gate2Accept.checked;
+  });
+
+  gate2Continue.addEventListener('click', () => {
+    if (gate2Accept.checked) showStep(3);
+  });
+
+  gate2Back.addEventListener('click', () => showStep(1));
+  gate3Back.addEventListener('click', () => showStep(2));
+  gate3Continue.addEventListener('click', () => showStep(4));
+  gateVerifyBack.addEventListener('click', () => showStep(3));
+  gateVerifyContinue.addEventListener('click', () => showStep(5));
+  gateSubmitBack.addEventListener('click', () => showStep(4));
+  gateSubmitContinue.addEventListener('click', () => showStep(6));
+  gatePaymentBack.addEventListener('click', () => showStep(5));
+</script>
+
+</body>
+</html>
